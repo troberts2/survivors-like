@@ -101,9 +101,9 @@ public class PlayerMovement : MonoBehaviour
 
         //get mouse pos and direction to shoot
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePos - transform.position).normalized;
+        Vector2 direction = (mousePos - transform.position);
+        direction = direction.normalized;
         newBullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
-        Debug.Log("shooting");
     }
 
     #endregion

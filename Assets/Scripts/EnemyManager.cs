@@ -1,18 +1,64 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] Transform playerLocation;
+    [SerializeField] private GameObject enemyObject;
+    [SerializeField] private Canvas enemyDamageCanvas;
+    [SerializeField] private GameObject textMeshObject;
+    [SerializeField] private float textFadeAfter = 0.3f;
+    [SerializeField] private int spawnAmount = 3;
+    [SerializeField] private float spawnRate = 5f;
+    [SerializeField] private float spawnRadius = 10f;
+
+    //temp test enemy variables
+    public float enemyHealth = 10f;
+    public float enemySpeed = 2.5f;
+    public float enemyDamage = 1f;
+    public float attackCooldown = 1.0f;
+
+    [ContextMenu("Start waves")]
+    public void StartEnemyWave()
     {
-        
+        StartCoroutine(StartWave());
     }
 
-    // Update is called once per frame
-    void Update()
+    private IEnumerator StartWave()
     {
-        
+        while (true)
+        {
+            for(int i = 0; i < spawnAmount; i++)
+            {
+                SpawnAtRandomPoint();
+            }
+            yield return new WaitForSeconds(spawnRate);
+        }
+    }
+
+    private void SpawnAtRandomPoint()
+    {
+        Vector2 randomPoint = Random.insideUnitCircle.normalized * spawnRadius;
+
+        Vector2 randomPointAroundPlayer = (Vector2)playerLocation.position + randomPoint;
+
+        GameObject newEnemy = Instantiate(enemyObject, transform);
+        Enemy e = newEnemy.GetComponent<Enemy>();
+        e.Initialize(enemyHealth, enemySpeed, enemyDamage, attackCooldown, playerLocation, this);
+        newEnemy.transform.position = randomPointAroundPlayer;
+    }
+
+    public void EnemyDamageTaken(float amount, Vector2 enemyPos)
+    {
+        GameObject enemyDamageText = Instantiate(textMeshObject, enemyDamageCanvas.transform);
+        enemyDamageText.GetComponent<TextMeshProUGUI>().text = amount.ToString();
+        Vector2 randomTextSpawn = new Vector2(Random.Range(-0.2f, 0.2f), Random.Range(0.2f, 0.3f));
+        Vector2 textSpawnWOffset = enemyPos + randomTextSpawn;
+        enemyDamageText.transform.position = textSpawnWOffset;
+        enemyDamageText.transform.DOMoveY(textSpawnWOffset.y + .25f, textFadeAfter, false).SetEase(Ease.OutSine);
+        Destroy(enemyDamageText, textFadeAfter);
     }
 }
