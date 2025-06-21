@@ -15,18 +15,21 @@ public class Enemy : MonoBehaviour
     private Transform playerLoc;
     private EnemyManager em;
 
+    private EnemyStats stats;
+
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public void Initialize(float health, float speed, float damage, float attackCooldown, Transform playerLocation, EnemyManager enemyManager)
+    public void Initialize(Transform playerLocation, EnemyStats stats, EnemyManager enemyManager)
     {
         rb = GetComponent<Rigidbody2D>();
-        enemyHealth = health;
+        /*enemyHealth = health;
         enemySpeed = speed;
-        enemyDamage = damage;
-        this.attackCooldown = attackCooldown;
+        enemyDamage = damage;*/
+        /*this.attackCooldown = attackCooldown;*/
         playerLoc = playerLocation;
         em = enemyManager;
+        this.stats = stats;
     }
 
     // Update is called once per frame

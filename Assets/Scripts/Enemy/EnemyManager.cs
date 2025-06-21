@@ -6,14 +6,20 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] Transform playerLocation;
-    [SerializeField] private GameObject enemyObject;
-    [SerializeField] private Canvas enemyDamageCanvas;
-    [SerializeField] private GameObject textMeshObject;
-    [SerializeField] private float textFadeAfter = 0.3f;
+
+    [Header("Spawn Settings")]
     [SerializeField] private int spawnAmount = 3;
     [SerializeField] private float spawnRate = 5f;
     [SerializeField] private float spawnRadius = 10f;
+
+    [Header("Enemy Stats")]
+    [SerializeField] private EnemyStats[] enemyTypes;
+
+    [Header("Damage numbers")]
+    [SerializeField] Transform playerLocation;
+    [SerializeField] private Canvas enemyDamageCanvas;
+    [SerializeField] private GameObject textMeshObject;
+    [SerializeField] private float textFadeAfter = 0.3f;
 
     //temp test enemy variables
     public float enemyHealth = 10f;
@@ -21,7 +27,6 @@ public class EnemyManager : MonoBehaviour
     public float enemyDamage = 1f;
     public float attackCooldown = 1.0f;
 
-    [ContextMenu("Start waves")]
     public void StartEnemyWave()
     {
         StartCoroutine(StartWave());
@@ -45,10 +50,10 @@ public class EnemyManager : MonoBehaviour
 
         Vector2 randomPointAroundPlayer = (Vector2)playerLocation.position + randomPoint;
 
-        GameObject newEnemy = Instantiate(enemyObject, transform);
+        /*GameObject newEnemy = Instantiate(enemyObject, transform);
         Enemy e = newEnemy.GetComponent<Enemy>();
         e.Initialize(enemyHealth, enemySpeed, enemyDamage, attackCooldown, playerLocation, this);
-        newEnemy.transform.position = randomPointAroundPlayer;
+        newEnemy.transform.position = randomPointAroundPlayer;*/
     }
 
     public void EnemyDamageTaken(float amount, Vector2 enemyPos)
