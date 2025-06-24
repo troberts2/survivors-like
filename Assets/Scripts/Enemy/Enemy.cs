@@ -6,21 +6,27 @@ using DG.Tweening;
 
 public class Enemy : MonoBehaviour
 {
-    private float enemyHealth;
-    private float enemySpeed = 5f;
-    private float enemyDamage = 1f;
-    private float attackCooldown = 1.0f;
-    private float currentAttackCooldown;
-    private Rigidbody2D rb;
-    private Transform playerLoc;
-    private EnemyManager em;
+    public enum EnemyType
+    {
+        None,
+        Mushroom
+    }
+    internal EnemyType enemyType;
+    internal float enemyHealth;
+    internal float enemySpeed = 2.5f;
+    internal float enemyDamage = 1f;
+    internal float attackCooldown = 1.0f;
+    internal float currentAttackCooldown;
+    internal Rigidbody2D rb;
+    public Transform playerLoc;
+    internal EnemyManager em;
 
-    private EnemyStats stats;
+    internal EnemyStats stats;
 
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public void Initialize(Transform playerLocation, EnemyStats stats, EnemyManager enemyManager)
+    public virtual void Initialize(Transform playerLocation, EnemyStats stats, EnemyManager enemyManager)
     {
         rb = GetComponent<Rigidbody2D>();
         /*enemyHealth = health;
@@ -33,7 +39,7 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         if(currentAttackCooldown >= 0)
         {
@@ -44,7 +50,7 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// for movement only right now
     /// </summary>
-    private void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         if(playerLoc != null)
         {
@@ -77,7 +83,7 @@ public class Enemy : MonoBehaviour
     /// deals damage to player, called on collision
     /// </summary>
     /// <param name="ph"></param>
-    private void AttackPlayer(PlayerHealth ph)
+    public virtual void AttackPlayer(PlayerHealth ph)
     {
         //dont attack if on cd
         if(currentAttackCooldown > 0) { return; }
