@@ -6,36 +6,23 @@ using DG.Tweening;
 
 public class Enemy : MonoBehaviour
 {
-    public enum EnemyType
-    {
-        None,
-        Mushroom
-    }
-    internal EnemyType enemyType;
-    internal float enemyHealth;
-    internal float enemySpeed = 2.5f;
-    internal float enemyDamage = 1f;
-    internal float attackCooldown = 1.0f;
     internal float currentAttackCooldown;
     internal Rigidbody2D rb;
     public Transform playerLoc;
     internal EnemyManager em;
+    internal float currentHealth;
 
-    internal EnemyStats stats;
+    public EnemyStats stats;
 
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public virtual void Initialize(Transform playerLocation, EnemyStats stats, EnemyManager enemyManager)
+    public virtual void Initialize(Transform playerLocation, EnemyManager enemyManager)
     {
         rb = GetComponent<Rigidbody2D>();
-        /*enemyHealth = health;
-        enemySpeed = speed;
-        enemyDamage = damage;*/
-        /*this.attackCooldown = attackCooldown;*/
         playerLoc = playerLocation;
         em = enemyManager;
-        this.stats = stats;
+        currentHealth = stats.health;
     }
 
     // Update is called once per frame
@@ -55,7 +42,7 @@ public class Enemy : MonoBehaviour
         if(playerLoc != null)
         {
             Vector2 moveDir = (playerLoc.position - transform.position).normalized;
-            rb.velocity = moveDir * enemySpeed;
+            rb.velocity = moveDir * stats.speed;
         }
     }
 
@@ -63,7 +50,7 @@ public class Enemy : MonoBehaviour
     /// normal collisions
     /// </summary>
     /// <param name="collision"></param>
-    private void OnCollisionStay2D(Collision2D collision)
+    public virtual void OnCollisionStay2D(Collision2D collision)
     {
         var collider = collision.collider;
 
@@ -89,21 +76,21 @@ public class Enemy : MonoBehaviour
         if(currentAttackCooldown > 0) { return; }
 
         //attack and set attack cd
-        currentAttackCooldown = attackCooldown;
-        ph.ChangeHealth(-enemyDamage);
+        currentAttackCooldown = stats.attackCooldown;
+        ph.ChangeHealth(-stats.damage);
     }
 
     /// <summary>
     /// changes health and calls damage numbers from enemyManager
     /// </summary>
     /// <param name="damage"></param>
-    private void ChangeHealth(float damage)
+    public virtual void ChangeHealth(float damage)
     {
-        enemyHealth += damage;
+        currentHealth += damage;
 
         em.EnemyDamageTaken(damage, transform.position);
 
-        if(enemyHealth <= 0)
+        if(currentHealth <= 0)
         {
             //handle enemy destory better TODO
             Destroy(gameObject);

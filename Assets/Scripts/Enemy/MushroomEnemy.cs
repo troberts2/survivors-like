@@ -5,7 +5,7 @@ using UnityEngine.LowLevel;
 
 public class MushroomEnemy : Enemy
 {
-    [SerializeField] private Animator animator;
+    private Animator animator;
     private static readonly int Idle = Animator.StringToHash("idle");
     private static readonly int Run = Animator.StringToHash("run");
     private static readonly int TakeHit = Animator.StringToHash("take hit");
@@ -28,9 +28,9 @@ public class MushroomEnemy : Enemy
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public override void Initialize(Transform playerLocation, EnemyStats stats, EnemyManager enemyManager)
+    public override void Initialize(Transform playerLocation, EnemyManager enemyManager)
     {
-        base.Initialize(playerLocation, stats, enemyManager);
+        base.Initialize(playerLocation, enemyManager);
         
         animator = GetComponentInChildren<Animator>();
     }
@@ -49,24 +49,23 @@ public class MushroomEnemy : Enemy
         if (state != currentState)
         {
             animator.CrossFade(state, 0, 0);
-            Debug.Log(state.ToString());
             currentState = state;
         }
     }
 
     public override void FixedUpdate()
     {
-        if (playerLoc != null)
+        if (playerLoc != null && !isAttacking && !isStunned && !isDead)
         {
             Vector3 playerPos = playerLoc.position;
-            if (Vector2.Distance(playerPos, transform.position) <= attackDistance && !isAttacking) 
+            if (Vector2.Distance(playerPos, transform.position) <= attackDistance) 
             {
                 AttackPlayer(null);
             }
-            else if(!isAttacking)
+            else
             {
                 Vector2 moveDir = (playerPos - transform.position).normalized;
-                rb.velocity = moveDir * enemySpeed;
+                rb.velocity = moveDir * stats.speed;
                 if(rb.velocity.x > 0 && !isFacingRight)
                 {
                     isFacingRight = true;
@@ -87,9 +86,10 @@ public class MushroomEnemy : Enemy
         if (currentAttackCooldown > 0) { return; }
 
         //attack and set attack cd
-        currentAttackCooldown = attackCooldown;
+        currentAttackCooldown = stats.attackCooldown;
         rb.velocity = Vector3.zero;
         isAttacking = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
         Invoke(nameof(StopAttacking), attackAnimDuration - .1f);
         //make stop attacking better TODO
     }
@@ -115,5 +115,51 @@ public class MushroomEnemy : Enemy
     private void StopAttacking()
     {
         isAttacking = false;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    private void StopStun()
+    {
+        isStunned = false;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    private void DeathStuff()
+    {
+        isDead = false;
+        Destroy(gameObject);
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        var collider = collision.collider;
+        if (collider.CompareTag("PlayerBullet"))
+        {
+            ChangeHealth(-5);
+            Destroy(collider.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// changes health and calls damage numbers from enemyManager
+    /// </summary>
+    /// <param name="damage"></param>
+    public override void ChangeHealth(float damage)
+    {
+        currentHealth += damage;
+
+        em.EnemyDamageTaken(damage, transform.position);
+        isStunned = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        Invoke(nameof(StopStun), stunAnimDuration);
+
+        if (currentHealth <= 0)
+        {
+            isDead = true;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+            Invoke(nameof(DeathStuff), deadAnimDuration);
+        }
     }
 }

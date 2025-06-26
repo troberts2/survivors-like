@@ -8,5 +8,10 @@ public class EnemyStats : ScriptableObject
     public float speed;
     public float damage;
     public float attackCooldown;
-    // Add more stats as needed
+    public enum EnemyType
+    {
+        None,
+        Mushroom
+    }
+    public EnemyType enemyType;
 }

@@ -13,7 +13,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float spawnRadius = 10f;
 
     [Header("Enemy Stats")]
-    [SerializeField] private EnemyStats[] enemyTypes;
+    [SerializeField] private GameObject[] enemyTypes;
 
     [Header("Damage numbers")]
     [SerializeField] Transform playerLocation;
@@ -50,10 +50,10 @@ public class EnemyManager : MonoBehaviour
 
         Vector2 randomPointAroundPlayer = (Vector2)playerLocation.position + randomPoint;
 
-        /*GameObject newEnemy = Instantiate(enemyObject, transform);
+        GameObject newEnemy = Instantiate(enemyTypes[0], transform);
         Enemy e = newEnemy.GetComponent<Enemy>();
-        e.Initialize(enemyHealth, enemySpeed, enemyDamage, attackCooldown, playerLocation, this);
-        newEnemy.transform.position = randomPointAroundPlayer;*/
+        e.Initialize(playerLocation, this);
+        newEnemy.transform.position = randomPointAroundPlayer;
     }
 
     public void EnemyDamageTaken(float amount, Vector2 enemyPos)
