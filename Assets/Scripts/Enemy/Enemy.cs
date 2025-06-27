@@ -6,31 +6,27 @@ using DG.Tweening;
 
 public class Enemy : MonoBehaviour
 {
-    private float enemyHealth;
-    private float enemySpeed = 5f;
-    private float enemyDamage = 1f;
-    private float attackCooldown = 1.0f;
-    private float currentAttackCooldown;
-    private Rigidbody2D rb;
-    private Transform playerLoc;
-    private EnemyManager em;
+    internal float currentAttackCooldown;
+    internal Rigidbody2D rb;
+    public Transform playerLoc;
+    internal EnemyManager em;
+    internal float currentHealth;
+
+    public EnemyStats stats;
 
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public void Initialize(float health, float speed, float damage, float attackCooldown, Transform playerLocation, EnemyManager enemyManager)
+    public virtual void Initialize(Transform playerLocation, EnemyManager enemyManager)
     {
         rb = GetComponent<Rigidbody2D>();
-        enemyHealth = health;
-        enemySpeed = speed;
-        enemyDamage = damage;
-        this.attackCooldown = attackCooldown;
         playerLoc = playerLocation;
         em = enemyManager;
+        currentHealth = stats.health;
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         if(currentAttackCooldown >= 0)
         {
@@ -41,12 +37,12 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// for movement only right now
     /// </summary>
-    private void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         if(playerLoc != null)
         {
             Vector2 moveDir = (playerLoc.position - transform.position).normalized;
-            rb.velocity = moveDir * enemySpeed;
+            rb.velocity = moveDir * stats.speed;
         }
     }
 
@@ -54,7 +50,7 @@ public class Enemy : MonoBehaviour
     /// normal collisions
     /// </summary>
     /// <param name="collision"></param>
-    private void OnCollisionStay2D(Collision2D collision)
+    public virtual void OnCollisionStay2D(Collision2D collision)
     {
         var collider = collision.collider;
 
@@ -74,27 +70,27 @@ public class Enemy : MonoBehaviour
     /// deals damage to player, called on collision
     /// </summary>
     /// <param name="ph"></param>
-    private void AttackPlayer(PlayerHealth ph)
+    public virtual void AttackPlayer(PlayerHealth ph)
     {
         //dont attack if on cd
         if(currentAttackCooldown > 0) { return; }
 
         //attack and set attack cd
-        currentAttackCooldown = attackCooldown;
-        ph.ChangeHealth(-enemyDamage);
+        currentAttackCooldown = stats.attackCooldown;
+        ph.ChangeHealth(-stats.damage);
     }
 
     /// <summary>
     /// changes health and calls damage numbers from enemyManager
     /// </summary>
     /// <param name="damage"></param>
-    private void ChangeHealth(float damage)
+    public virtual void ChangeHealth(float damage)
     {
-        enemyHealth += damage;
+        currentHealth += damage;
 
         em.EnemyDamageTaken(damage, transform.position);
 
-        if(enemyHealth <= 0)
+        if(currentHealth <= 0)
         {
             //handle enemy destory better TODO
             Destroy(gameObject);
