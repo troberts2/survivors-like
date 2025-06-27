@@ -29,10 +29,29 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float bulletSpeed = 5f;
     private float currentAttackCooldown;
 
+    [Header("Animation")]
+    private Animator animator;
+    private static readonly int Idle = Animator.StringToHash("idle");
+    private static readonly int Run = Animator.StringToHash("run");
+    private static readonly int TakeHit = Animator.StringToHash("take hit");
+    private static readonly int Attack = Animator.StringToHash("attack");
+    private bool isFacingRight = true;
+
+    private float lockedTill;
+    private int currentState;
+
+    private bool isAttacking = false;
+    [SerializeField] private float attackAnimDuration;
+
+    private bool isStunned = false;
+    [SerializeField] private float stunAnimDuration;
+
     #region Unity Monobehavior
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>();
+        animator.CrossFade(Idle, 0, 0);
     }
 
     private void Awake()
@@ -70,18 +89,37 @@ public class PlayerMovement : MonoBehaviour
         if (currentDashCooldown >= 0) currentDashCooldown -= Time.deltaTime;
 
         if (currentAttackCooldown >= 0) currentAttackCooldown -= Time.deltaTime;
+
+        var state = GetState();
+
+        if (state != currentState)
+        {
+            animator.CrossFade(state, 0, 0);
+            currentState = state;
+        }
+
+        if (playerMoveDir.x > 0 && !isFacingRight)
+        {
+            isFacingRight = true;
+            transform.Rotate(0, 180, 0);
+        }
+        else if (playerMoveDir.x < 0 && isFacingRight)
+        {
+            isFacingRight = false;
+            transform.Rotate(0, -180, 0);
+        }
+
+        if (fire.IsPressed())
+        {
+            Shoot();
+        }
     }
 
     private void FixedUpdate()
     {
-        if (canMove)
+        if (canMove && !isAttacking)
         {
             rb.velocity = new Vector2(playerMoveDir.x * playerSpeed, playerMoveDir.y * playerSpeed);
-        }
-
-        if(fire.IsPressed())
-        {
-            Shoot();
         }
         
     }
@@ -97,6 +135,9 @@ public class PlayerMovement : MonoBehaviour
         }
 
         currentAttackCooldown = attackCooldown;
+        isAttacking = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        Invoke(nameof(StopAttacking), attackAnimDuration);
         GameObject newBullet = Instantiate(attackPrefab, transform.position, Quaternion.identity);
 
         //get mouse pos and direction to shoot
@@ -128,4 +169,28 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #endregion
+
+    private int GetState()
+    {
+        if (Time.time < lockedTill) return currentState;
+
+        //priorities
+ 
+        if (isAttacking) return LockState(Attack, attackAnimDuration);
+        if (isStunned) return LockState(TakeHit, stunAnimDuration);
+        var state = playerMoveDir.x != 0 ? Run : Idle;
+        return state;
+
+        int LockState(int s, float t)
+        {
+            lockedTill = Time.time + t;
+            return s;
+        }
+    }
+    private void StopAttacking()
+    {
+        isAttacking = false;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
 }
