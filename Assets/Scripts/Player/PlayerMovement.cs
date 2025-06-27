@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     [Header("Move and Dash")]
-    [SerializeField] private float playerSpeed = 3f;
+    [SerializeField] private float _playerSpeed = 3f;
     [SerializeField] private float dashTime = .5f;
     [SerializeField] private float dashStrength = 3.0f;
     [SerializeField] private float dashCooldown = 1f;
@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject attackPrefab;
     [SerializeField] private float attackCooldown = 0.25f;
     [SerializeField] private float bulletSpeed = 5f;
+    [SerializeField] private float _baseDamage = 2f;
     private float currentAttackCooldown;
 
     [Header("Animation")]
@@ -45,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isStunned = false;
     [SerializeField] private float stunAnimDuration;
+
+    public float BaseDamage { get => _baseDamage; set => _baseDamage = value; }
+    public float PlayerSpeed { get => _playerSpeed; set => _playerSpeed = value; }
 
     #region Unity Monobehavior
     void Start()
@@ -119,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (canMove && !isAttacking)
         {
-            rb.velocity = new Vector2(playerMoveDir.x * playerSpeed, playerMoveDir.y * playerSpeed);
+            rb.velocity = new Vector2(playerMoveDir.x * PlayerSpeed, playerMoveDir.y * PlayerSpeed);
         }
         
     }
