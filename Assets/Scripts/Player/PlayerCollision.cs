@@ -6,11 +6,13 @@ public class PlayerCollision : MonoBehaviour
 {
     private Rigidbody2D rb;
     private PlayerHealth ph;
+    private PlayerUpgrade pu;
 
     private void Start()
     {
         ph = GetComponent<PlayerHealth>();
         rb = GetComponent<Rigidbody2D>();
+        pu = GetComponent<PlayerUpgrade>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -38,6 +40,15 @@ public class PlayerCollision : MonoBehaviour
             if (enemy != null)
             {
                 ph.ChangeHealth(-enemy.stats.damage);
+            }
+        }
+
+        if(collider.CompareTag("Experience"))
+        {
+            XPBehavior xp = collider.GetComponent<XPBehavior>();
+            if (xp != null)
+            {
+                xp.GoToPlayer(transform, xp.PlayerCollectDelay, pu);
             }
         }
     }

@@ -5,21 +5,36 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float maxPlayerHealth = 10f;
-    private float currentPlayerHealth;
+    [SerializeField] private float _maxPlayerHealth = 10f;
+    private float _currentPlayerHealth;
+    private float _armor = 0f;
     [SerializeField] private Image healthBar;
+
+    public float MaxPlayerHealth { get => _maxPlayerHealth; set => _maxPlayerHealth = value; }
+    public float CurrentPlayerHealth { get => _currentPlayerHealth; set => _currentPlayerHealth = value; }
+    public float Armor { get => _armor; set => _armor = value; }
+
     // Start is called before the first frame update
     void Start()
     {
-        currentPlayerHealth = maxPlayerHealth;
+        CurrentPlayerHealth = MaxPlayerHealth;
     }
 
+    //exepct amount to be negative
     public void ChangeHealth(float amount)
     {
-        currentPlayerHealth += amount;
+        var armorDiff = amount + Armor;
+        if(armorDiff <= 0) { 
+            CurrentPlayerHealth += armorDiff;
+        }
+        else
+        {
+            CurrentPlayerHealth += amount;
+        }
+        
         UpdateHealthUI();
 
-        if(currentPlayerHealth < 0 )
+        if(CurrentPlayerHealth < 0 )
         {
             //die
             Debug.Log("no helath");
@@ -29,6 +44,6 @@ public class PlayerHealth : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        healthBar.fillAmount = currentPlayerHealth / maxPlayerHealth;
+        healthBar.fillAmount = CurrentPlayerHealth / MaxPlayerHealth;
     }
 }

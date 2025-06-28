@@ -14,4 +14,5 @@ public class EnemyStats : ScriptableObject
         Mushroom
     }
     public EnemyType enemyType;
+    public GameObject xpDrop;
 }
