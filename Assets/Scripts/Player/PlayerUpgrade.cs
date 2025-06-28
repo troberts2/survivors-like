@@ -8,18 +8,21 @@ using UnityEngine.UI;
 public class PlayerUpgrade : MonoBehaviour
 {
     [SerializeField] private Image _xpBar;
+    [SerializeField] private TextMeshProUGUI _xpBarText;
     [SerializeField] private RectTransform _upgradePanelTransform;
     [SerializeField] private float _upgradePanelAppearTime = 0.25f;
     [SerializeField] private Transform _upgradeHolder;
     private GameObject[] _currentUpgradeButtons;
     private float _currentXPAmount = 0;
     private float _levelUpXPAmount;
-    private float _currentLevel = 0;
+    private int _currentLevel = 0;
+
+    private bool _isInUpgrade = false;
 
     private PlayerMovement _pm;
     private PlayerHealth _ph;
 
-    private float[] _amountOfXPPerLevel =
+    private int[] _amountOfXPPerLevel =
         {100,
          200,
          400,
@@ -45,7 +48,7 @@ public class PlayerUpgrade : MonoBehaviour
         {
             //fill bar
             _xpBar.fillAmount = 1;
-            //start upgrade screen
+            if(!_isInUpgrade) OpenUpgradeScreen();
             return;
         }
 
@@ -55,6 +58,8 @@ public class PlayerUpgrade : MonoBehaviour
 
     public void OpenUpgradeScreen()
     {
+        _isInUpgrade = true;    
+
         //slide panel in
         _upgradePanelTransform.anchoredPosition = new Vector2(0, -1000);
         _upgradePanelTransform.DOAnchorPos(Vector2.zero, _upgradePanelAppearTime, false).SetEase(Ease.InCubic);
@@ -64,7 +69,7 @@ public class PlayerUpgrade : MonoBehaviour
         {
             int randomIndexInUpgradeButtons = Random.Range(0, _upgradeButtons.Count);
             GameObject randUpgrade = _upgradeButtons[randomIndexInUpgradeButtons];
-            var newButton = Instantiate(randUpgrade, _upgradeHolder);
+            GameObject newButton = Instantiate(randUpgrade, _upgradeHolder);
             var upgrade = newButton.GetComponent<Upgrades>();
             upgrade.Init(this);
 
@@ -81,14 +86,41 @@ public class PlayerUpgrade : MonoBehaviour
                 //normal upgrade 
                 newButLevel.text = "LVL: " + _upgradeLevels[randomIndexInUpgradeButtons];
             }
-            Debug.Log("Buttons spwaned");
         }
-
+        _currentLevel++;
     }
 
     private void CloseOutOfUpgradeScreen()
     {
+        //slide panel out
+        _upgradePanelTransform.anchoredPosition = new Vector2(0, 0);
+        _upgradePanelTransform.DOAnchorPos(new Vector2(0, -1000), _upgradePanelAppearTime, false).SetEase(Ease.InCubic);
 
+        //clear upgrade buttons 
+        for(int i = 0; i < 4; i++)
+        {
+            if (_currentUpgradeButtons[i] != null)
+            {
+                Destroy(_currentUpgradeButtons[i]);
+                _currentUpgradeButtons[i] = null;
+            }  
+        }
+
+        //reset xp
+        _currentXPAmount -= _levelUpXPAmount;
+        _levelUpXPAmount = _amountOfXPPerLevel[_currentLevel];
+
+        //update ui
+        _xpBar.fillAmount = _currentXPAmount / _levelUpXPAmount;
+        _xpBarText.text = "LVL: " + _currentLevel.ToString();
+
+        //check if upgrade again right away
+        if(_currentXPAmount >= _levelUpXPAmount)
+        {
+            Invoke(nameof(OpenUpgradeScreen), _upgradePanelAppearTime);
+        }
+        _isInUpgrade = false;
+        Debug.Log(_levelUpXPAmount);
     }
 
     private IEnumerator UpgradeScreen()

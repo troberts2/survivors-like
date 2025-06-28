@@ -21,11 +21,12 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private GameObject textMeshObject;
     [SerializeField] private float textFadeAfter = 0.3f;
 
-    //temp test enemy variables
-    public float enemyHealth = 10f;
-    public float enemySpeed = 2.5f;
-    public float enemyDamage = 1f;
-    public float attackCooldown = 1.0f;
+    private PlayerMovement pm;
+
+    private void Start()
+    {
+        pm = PlayerManager.Instance.PlayerMovement;
+    }
 
     public void StartEnemyWave()
     {
@@ -52,7 +53,7 @@ public class EnemyManager : MonoBehaviour
 
         GameObject newEnemy = Instantiate(enemyTypes[0], transform);
         Enemy e = newEnemy.GetComponent<Enemy>();
-        e.Initialize(playerLocation, this);
+        e.Initialize(playerLocation, this, pm);
         newEnemy.transform.position = randomPointAroundPlayer;
     }
 

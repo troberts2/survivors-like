@@ -28,9 +28,9 @@ public class MushroomEnemy : Enemy
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public override void Initialize(Transform playerLocation, EnemyManager enemyManager)
+    public override void Initialize(Transform playerLocation, EnemyManager enemyManager, PlayerMovement playerMovement)
     {
-        base.Initialize(playerLocation, enemyManager);
+        base.Initialize(playerLocation, enemyManager, playerMovement);
         
         animator = GetComponentInChildren<Animator>();
     }
@@ -126,9 +126,10 @@ public class MushroomEnemy : Enemy
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
-    private void DeathStuff()
+    public override void Die()
     {
         isDead = false;
+        Instantiate(stats.xpDrop, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
@@ -137,8 +138,16 @@ public class MushroomEnemy : Enemy
         var collider = collision.collider;
         if (collider.CompareTag("PlayerBullet"))
         {
-            ChangeHealth(-5);
+            ChangeHealth(-pm.BaseDamage);
             Destroy(collider.gameObject);
+        }
+    }
+
+    public override void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("PlayerBullet"))
+        {
+            ChangeHealth(-pm.BaseDamage);
         }
     }
 
@@ -159,7 +168,7 @@ public class MushroomEnemy : Enemy
         {
             isDead = true;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
-            Invoke(nameof(DeathStuff), deadAnimDuration);
+            Invoke(nameof(Die), deadAnimDuration);
         }
     }
 }

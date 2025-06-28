@@ -18,3 +18,4 @@ MonoBehaviour:
   damage: 2
   attackCooldown: 1
   enemyType: 1
+  xpDrop: {fileID: 2239133132677371891, guid: 61dbc83aa9c91a248a8b4ff0da2ce5e1, type: 3}

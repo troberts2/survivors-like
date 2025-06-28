@@ -13,16 +13,18 @@ public class Enemy : MonoBehaviour
     internal float currentHealth;
 
     public EnemyStats stats;
+    public PlayerMovement pm;
 
     /// <summary>
     /// for initalizing enemy called by enemyManager when spawned in
     /// </summary>
-    public virtual void Initialize(Transform playerLocation, EnemyManager enemyManager)
+    public virtual void Initialize(Transform playerLocation, EnemyManager enemyManager, PlayerMovement playerMovement)
     {
         rb = GetComponent<Rigidbody2D>();
         playerLoc = playerLocation;
         em = enemyManager;
         currentHealth = stats.health;
+        pm = playerMovement;
     }
 
     // Update is called once per frame
@@ -61,7 +63,16 @@ public class Enemy : MonoBehaviour
 
         if(collider.CompareTag("PlayerBullet"))
         {
-            ChangeHealth(-10);
+            ChangeHealth(-pm.BaseDamage);
+            Destroy(collider.gameObject);
+        }
+    }
+
+    public virtual void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("PlayerBullet"))
+        {
+            ChangeHealth(-pm.BaseDamage);
             Destroy(collider.gameObject);
         }
     }
@@ -90,10 +101,16 @@ public class Enemy : MonoBehaviour
 
         em.EnemyDamageTaken(damage, transform.position);
 
+        Debug.Log(currentHealth);
         if(currentHealth <= 0)
         {
-            //handle enemy destory better TODO
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    public virtual void Die()
+    {
+        Instantiate(stats.xpDrop, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 }

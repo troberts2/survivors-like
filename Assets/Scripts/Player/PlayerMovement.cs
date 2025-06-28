@@ -182,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
  
         if (isAttacking) return LockState(Attack, attackAnimDuration);
         if (isStunned) return LockState(TakeHit, stunAnimDuration);
-        var state = playerMoveDir.x != 0 ? Run : Idle;
+        var state = playerMoveDir != Vector2.zero ? Run : Idle;
         return state;
 
         int LockState(int s, float t)
