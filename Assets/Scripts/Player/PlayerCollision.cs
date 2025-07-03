@@ -26,7 +26,7 @@ public class PlayerCollision : MonoBehaviour
 
             if(enemy != null)
             {
-                ph.ChangeHealth(-enemy.stats.damage);
+                ph.ChangeHealth(-enemy.Stats.damage);
             }
         }
     }
@@ -39,7 +39,7 @@ public class PlayerCollision : MonoBehaviour
             if (enemy == null) enemy = collider.gameObject.GetComponentInParent<Enemy>();
             if (enemy != null)
             {
-                ph.ChangeHealth(-enemy.stats.damage);
+                ph.ChangeHealth(-enemy.Stats.damage);
             }
         }
 
