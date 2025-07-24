@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfbaba1981cce5a4393ae656059e1b70, type: 3}
+  m_Name: Attack1Left
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 1012368357324200578, guid: 3bb48781a1d610743842de3f66497243, type: 3}
+  projectileSpeed: 5
+  coneAngle: 100
+  bulletsPerShot: 15
+  repeatCount: 3
+  delayBetweenShots: 0.15
+  shootDirAngle: 165
+  targetPlayer: 0
+  fireDelay: 0.45

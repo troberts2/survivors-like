@@ -6,35 +6,35 @@ using DG.Tweening;
 
 public class Enemy : MonoBehaviour
 {
-    private Animator animator;
-    private Rigidbody2D rb;
+    protected Animator animator;
+    protected Rigidbody2D rb;
 
-    private static readonly int Idle = Animator.StringToHash("idle");
-    private static readonly int Run = Animator.StringToHash("run");
-    private static readonly int TakeHit = Animator.StringToHash("take hit");
-    private static readonly int Death = Animator.StringToHash("death");
-    private static readonly int Attack = Animator.StringToHash("attack");
-    private bool isFacingRight = true;
+    protected static readonly int Idle = Animator.StringToHash("idle");
+    protected static readonly int Run = Animator.StringToHash("run");
+    protected static readonly int TakeHit = Animator.StringToHash("take hit");
+    protected static readonly int Death = Animator.StringToHash("death");
+    protected static readonly int Attack = Animator.StringToHash("attack");
+    protected bool isFacingRight = true;
 
-    private bool isAttacking = false;
-    [SerializeField] private float attackAnimDuration;
-    [SerializeField] private float attackDistance = 0.3f;
-    private float currentAttackCooldown;
+    protected bool isAttacking = false;
+    [SerializeField] protected float attackAnimDuration;
+    [SerializeField] protected float attackDistance = 0.3f;
+    protected float currentAttackCooldown;
 
-    private bool isStunned = false;
-    [SerializeField] private float stunAnimDuration;
+    protected bool isStunned = false;
+    [SerializeField] protected float stunAnimDuration;
 
-    private bool isDead = false;
-    [SerializeField] private float deadAnimDuration;
-    private float lockedTill;
-    private int currentState;
+    protected bool isDead = false;
+    [SerializeField] protected float deadAnimDuration;
+    protected float lockedTill;
+    protected int currentState;
 
-    private Transform playerLoc;
-    private EnemyManager em;
-    private float currentHealth;
+    [SerializeField] protected Transform playerLoc;
+    [SerializeField] protected EnemyManager em;
+    protected float currentHealth;
 
-    [SerializeField] private EnemyStats stats;
-    private PlayerMovement pm;
+    [SerializeField] protected EnemyStats stats;
+    protected PlayerMovement pm;
 
     public EnemyStats Stats { get => stats; set => stats = value; }
 
@@ -78,7 +78,7 @@ public class Enemy : MonoBehaviour
         if (playerLoc != null && !isAttacking && !isStunned && !isDead)
         {
             Vector3 playerPos = playerLoc.position;
-            if (Vector2.Distance(playerPos, transform.position) <= attackDistance)
+            if (Vector2.Distance(playerPos, transform.position) <= attackDistance && !isAttacking)
             {
                 AttackPlayer(null);
             }
@@ -154,7 +154,7 @@ public class Enemy : MonoBehaviour
     /// get animations state
     /// </summary>
     /// <returns></returns>
-    private int GetState()
+    public virtual int GetState()
     {
         if (Time.time < lockedTill) return currentState;
 
@@ -175,7 +175,7 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// stops attack state and unrestrains
     /// </summary>
-    private void StopAttacking()
+    public virtual void StopAttacking()
     {
         isAttacking = false;
         rb.constraints = RigidbodyConstraints2D.None;
@@ -185,7 +185,7 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// stops stun state and unrestrains
     /// </summary>
-    private void StopStun()
+    public virtual void StopStun()
     {
         isStunned = false;
         rb.constraints = RigidbodyConstraints2D.None;

@@ -113,6 +113,7 @@ MonoBehaviour:
   attackDistance: 0.7
   stunAnimDuration: 0.383
   deadAnimDuration: 0.65
+  stats: {fileID: 11400000, guid: 4ddd44ecf3343eb4abffb2c6492de4c8, type: 2}
 --- !u!1 &7505746821530388930
 GameObject:
   m_ObjectHideFlags: 0

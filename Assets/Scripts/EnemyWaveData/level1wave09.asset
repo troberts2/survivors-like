@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da08698846745964bb12834c0ae408bc, type: 3}
+  m_Name: level1wave09
+  m_EditorClassIdentifier: 
+  enemyTypes:
+  - {fileID: 8211058343247035298, guid: d40ed2838fe58414d9a8ad3cbf4acce4, type: 3}
+  minibossPrefab: {fileID: 0}

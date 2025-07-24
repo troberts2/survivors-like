@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyStats", menuName = "EnemyStat")]
+[CreateAssetMenu(fileName = "EnemyStats", menuName = "Enemy/EnemyStat")]
 public class EnemyStats : ScriptableObject
 {
     public string enemyName;
@@ -11,7 +11,10 @@ public class EnemyStats : ScriptableObject
     public enum EnemyType
     {
         None,
-        Mushroom
+        Mushroom,
+        FlyingEye,
+        Goblin,
+        Skeleton
     }
     public EnemyType enemyType;
     public GameObject xpDrop;
