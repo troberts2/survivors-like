@@ -11,6 +11,8 @@ public class PlayerManager : MonoBehaviour
 
     public static PlayerManager Instance;
 
+    public PlayerControls playerControls;
+
     private void Awake()
     {
         if(Instance == null)
@@ -21,5 +23,9 @@ public class PlayerManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        playerControls = new PlayerControls();
     }
+
+
 }

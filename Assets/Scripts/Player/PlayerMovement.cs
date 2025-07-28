@@ -7,7 +7,6 @@ public class PlayerMovement : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private PlayerControls playerControls;
     private InputAction move;
     private InputAction fire;
     private InputAction dash;
@@ -46,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isStunned = false;
     [SerializeField] private float stunAnimDuration;
+
+    private PlayerControls playerControls;
 
     public float BaseDamage { get => _baseDamage; set => _baseDamage = value; }
     public float PlayerSpeed { get => _playerSpeed; set => _playerSpeed = value; }
