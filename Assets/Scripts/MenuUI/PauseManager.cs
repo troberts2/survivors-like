@@ -10,6 +10,7 @@ public class PauseManager : MonoBehaviour
     private InputAction pauseBack;
     public static event Action OnPause;
     public static event Action OnResume;
+    public static event Action OnOptionsClose;
     private bool isPaused = false;
     private bool isOptions = false;
     [SerializeField] private float menuAnimTime = 0.35f;
@@ -101,6 +102,7 @@ public class PauseManager : MonoBehaviour
 
     public void CloseOptionsMenu()
     {
+        OnOptionsClose?.Invoke();
         isOptions = false;
         optionsPanel.anchoredPosition = new Vector2(0, 0);
         optionsGroup.alpha = 1.0f;
